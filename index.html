@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Pastelitos</title>
+  <style>
+    :root{
+      --azul:#0d47a1;
+      --azul2:#1976d2;
+      --claro:#eaf3ff;
+      --dorado:#f4b400;
+      --blanco:#ffffff;
+      --texto:#183153;
+      --rojo:#c62828;
+      --verde:#2e7d32;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(135deg,#eaf3ff,#ffffff);
+      color:var(--texto);
+      min-height:100vh;
+      padding:20px;
+    }
+
+    .contenedor{
+      max-width:760px;
+      margin:auto;
+    }
+
+    .encabezado{
+      background:linear-gradient(135deg,var(--azul),var(--azul2));
+      color:white;
+      border-radius:22px;
+      padding:28px 22px;
+      text-align:center;
+      box-shadow:0 12px 30px rgba(13,71,161,.22);
+      margin-bottom:20px;
+    }
+
+    .encabezado h1{
+      margin:0 0 8px;
+      font-size:2rem;
+    }
+
+    .encabezado p{
+      margin:0;
+      opacity:.92;
+    }
+
+    .tarjeta{
+      background:white;
+      border-radius:20px;
+      padding:22px;
+      box-shadow:0 10px 25px rgba(0,0,0,.08);
+      margin-bottom:20px;
+    }
+
+    label{
+      display:block;
+      font-weight:bold;
+      margin:14px 0 7px;
+    }
+
+    input{
+      width:100%;
+      padding:14px;
+      border:2px solid #d6e4f5;
+      border-radius:12px;
+      font-size:1rem;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:var(--azul2);
+      box-shadow:0 0 0 3px rgba(25,118,210,.12);
+    }
+
+    .botones{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    button{
+      border:none;
+      border-radius:12px;
+      padding:14px 16px;
+      font-size:1rem;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .guardar{background:var(--azul2);color:white}
+    .whatsapp{background:#25D366;color:white}
+    .borrarTodo{background:#fbe9e7;color:var(--rojo)}
+    .eliminar{background:#ffebee;color:var(--rojo);padding:8px 10px}
+
+    .resumen{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .dato{
+      background:var(--claro);
+      border-radius:16px;
+      padding:18px;
+      text-align:center;
+    }
+
+    .dato strong{
+      display:block;
+      font-size:1.8rem;
+      color:var(--azul);
+      margin-top:5px;
+    }
+
+    .tabla-wrap{overflow-x:auto}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:520px;
+    }
+
+    th,td{
+      padding:12px 10px;
+      border-bottom:1px solid #e8eef5;
+      text-align:left;
+    }
+
+    th{
+      background:#f4f8fc;
+      color:var(--azul);
+    }
+
+    .vacio{
+      text-align:center;
+      color:#6c7a89;
+      padding:25px;
+    }
+
+    .aviso{
+      display:none;
+      margin-top:12px;
+      padding:12px;
+      border-radius:10px;
+      background:#e8f5e9;
+      color:var(--verde);
+      font-weight:bold;
+    }
+
+    @media(min-width:620px){
+      .botones{grid-template-columns:1fr 1fr}
+      .resumen{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+</head>
+<body>
+  <main class="contenedor">
+    <section class="encabezado">
+      <h1>🥟 Registro de Pastelitos</h1>
+      <p>Cargá las docenas vendidas por cada persona</p>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Nuevo registro</h2>
+
+      <label for="nombre">Nombre del vendedor</label>
+      <input id="nombre" type="text" placeholder="Ejemplo: Silvina" autocomplete="name" />
+
+      <label for="docenas">Cantidad de docenas vendidas</label>
+      <input id="docenas" type="number" min="0.5" step="0.5" placeholder="Ejemplo: 5" />
+
+      <div class="botones">
+        <button class="guardar" onclick="registrarVenta()">✅ Registrar venta</button>
+        <button class="whatsapp" onclick="compartirWhatsApp()">📲 Compartir resumen</button>
+      </div>
+
+      <div id="aviso" class="aviso"></div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Resumen general</h2>
+
+      <div class="resumen">
+        <div class="dato">Registros<strong id="totalRegistros">0</strong></div>
+        <div class="dato">Vendedores<strong id="totalVendedores">0</strong></div>
+        <div class="dato">Docenas<strong id="totalDocenas">0</strong></div>
+      </div>
+
+      <div class="tabla-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Vendedor</th>
+              <th>Docenas</th>
+              <th>Fecha y hora</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaVentas"></tbody>
+        </table>
+      </div>
+
+      <p id="sinDatos" class="vacio">Todavía no se registraron ventas.</p>
+
+      <button class="borrarTodo" onclick="borrarTodo()">🗑️ Borrar todos los registros</button>
+    </section>
+  </main>
+
+  <script>
+    let ventas = JSON.parse(localStorage.getItem("ventasPastelitos")) || [];
+
+    function guardarDatos(){
+      localStorage.setItem("ventasPastelitos", JSON.stringify(ventas));
+    }
+
+    function mostrarAviso(texto, error=false){
+      const aviso = document.getElementById("aviso");
+      aviso.style.display = "block";
+      aviso.style.background = error ? "#ffebee" : "#e8f5e9";
+      aviso.style.color = error ? "#c62828" : "#2e7d32";
+      aviso.textContent = texto;
+      setTimeout(() => aviso.style.display = "none", 2500);
+    }
+
+    function registrarVenta(){
+      const nombre = document.getElementById("nombre").value.trim();
+      const docenas = parseFloat(document.getElementById("docenas").value);
+
+      if(!nombre){
+        mostrarAviso("Escribí el nombre del vendedor.", true);
+        return;
+      }
+
+      if(isNaN(docenas) || docenas <= 0){
+        mostrarAviso("Ingresá una cantidad válida de docenas.", true);
+        return;
+      }
+
+      ventas.push({
+        id: Date.now(),
+        nombre,
+        docenas,
+        fecha: new Date().toLocaleString("es-AR")
+      });
+
+      guardarDatos();
+      actualizarPantalla();
+
+      document.getElementById("nombre").value = "";
+      document.getElementById("docenas").value = "";
+      document.getElementById("nombre").focus();
+
+      mostrarAviso("Venta registrada correctamente.");
+    }
+
+    function eliminarVenta(id){
+      ventas = ventas.filter(v => v.id !== id);
+      guardarDatos();
+      actualizarPantalla();
+    }
+
+    function borrarTodo(){
+      if(ventas.length === 0) return;
+      const confirmar = confirm("¿Seguro que querés borrar todos los registros?");
+      if(confirmar){
+        ventas = [];
+        guardarDatos();
+        actualizarPantalla();
+      }
+    }
+
+    function resumenPorVendedor(){
+      const resumen = {};
+      ventas.forEach(v => {
+        resumen[v.nombre] = (resumen[v.nombre] || 0) + v.docenas;
+      });
+      return resumen;
+    }
+
+    function compartirWhatsApp(){
+      if(ventas.length === 0){
+        mostrarAviso("Primero registrá al menos una venta.", true);
+        return;
+      }
+
+      const resumen = resumenPorVendedor();
+      const total = ventas.reduce((suma, v) => suma + v.docenas, 0);
+
+      let mensaje = "🥟 *RESUMEN DE VENTA DE PASTELITOS*\n\n";
+      Object.entries(resumen)
+        .sort((a,b) => b[1] - a[1])
+        .forEach(([nombre, cantidad]) => {
+          mensaje += `👤 ${nombre}: *${cantidad} docenas*\n`;
+        });
+
+      mensaje += `\n✅ *TOTAL: ${total} docenas*`;
+
+      window.open("https://wa.me/?text=" + encodeURIComponent(mensaje), "_blank");
+    }
+
+    function actualizarPantalla(){
+      const tabla = document.getElementById("tablaVentas");
+      const sinDatos = document.getElementById("sinDatos");
+
+      tabla.innerHTML = "";
+
+      ventas.slice().reverse().forEach(v => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${v.nombre}</td>
+          <td>${v.docenas}</td>
+          <td>${v.fecha}</td>
+          <td><button class="eliminar" onclick="eliminarVenta(${v.id})">Eliminar</button></td>
+        `;
+        tabla.appendChild(fila);
+      });
+
+      sinDatos.style.display = ventas.length ? "none" : "block";
+
+      const resumen = resumenPorVendedor();
+      const totalDocenas = ventas.reduce((suma, v) => suma + v.docenas, 0);
+
+      document.getElementById("totalRegistros").textContent = ventas.length;
+      document.getElementById("totalVendedores").textContent = Object.keys(resumen).length;
+      document.getElementById("totalDocenas").textContent = totalDocenas;
+    }
+
+    actualizarPantalla();
+  </script>
+</body>
+</html>
