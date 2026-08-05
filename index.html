@@ -9,14 +9,16 @@
       --azul:#0d47a1;
       --azul2:#1976d2;
       --claro:#eaf3ff;
-      --dorado:#f4b400;
       --blanco:#ffffff;
       --texto:#183153;
       --rojo:#c62828;
       --verde:#2e7d32;
+      --membrillo:#a8324a;
+      --batata:#d06b24;
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:Arial, Helvetica, sans-serif;
@@ -27,7 +29,7 @@
     }
 
     .contenedor{
-      max-width:760px;
+      max-width:900px;
       margin:auto;
     }
 
@@ -79,6 +81,38 @@
       box-shadow:0 0 0 3px rgba(25,118,210,.12);
     }
 
+    .sabores{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+      margin-top:8px;
+    }
+
+    .sabor{
+      padding:16px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:2px solid #edf2f7;
+    }
+
+    .sabor.mem{
+      border-left:7px solid var(--membrillo);
+    }
+
+    .sabor.bat{
+      border-left:7px solid var(--batata);
+    }
+
+    .total-previo{
+      margin-top:16px;
+      padding:14px;
+      border-radius:12px;
+      background:var(--claro);
+      text-align:center;
+      font-weight:bold;
+      color:var(--azul);
+    }
+
     .botones{
       display:grid;
       grid-template-columns:1fr;
@@ -95,10 +129,26 @@
       cursor:pointer;
     }
 
-    .guardar{background:var(--azul2);color:white}
-    .whatsapp{background:#25D366;color:white}
-    .borrarTodo{background:#fbe9e7;color:var(--rojo)}
-    .eliminar{background:#ffebee;color:var(--rojo);padding:8px 10px}
+    .guardar{
+      background:var(--azul2);
+      color:white;
+    }
+
+    .whatsapp{
+      background:#25D366;
+      color:white;
+    }
+
+    .borrarTodo{
+      background:#fbe9e7;
+      color:var(--rojo);
+    }
+
+    .eliminar{
+      background:#ffebee;
+      color:var(--rojo);
+      padding:8px 10px;
+    }
 
     .resumen{
       display:grid;
@@ -116,17 +166,22 @@
 
     .dato strong{
       display:block;
-      font-size:1.8rem;
+      font-size:1.7rem;
       color:var(--azul);
       margin-top:5px;
     }
 
-    .tabla-wrap{overflow-x:auto}
+    .dato.mem strong{color:var(--membrillo)}
+    .dato.bat strong{color:var(--batata)}
+
+    .tabla-wrap{
+      overflow-x:auto;
+    }
 
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:520px;
+      min-width:700px;
     }
 
     th,td{
@@ -157,29 +212,51 @@
     }
 
     @media(min-width:620px){
+      .sabores{grid-template-columns:1fr 1fr}
       .botones{grid-template-columns:1fr 1fr}
-      .resumen{grid-template-columns:repeat(3,1fr)}
+      .resumen{grid-template-columns:repeat(4,1fr)}
     }
   </style>
 </head>
+
 <body>
   <main class="contenedor">
+
     <section class="encabezado">
       <h1>🥟 Registro de Pastelitos</h1>
-      <p>Cargá las docenas vendidas por cada persona</p>
+      <p>Registrá por separado las docenas de membrillo y batata</p>
     </section>
 
     <section class="tarjeta">
-      <h2>Nuevo registro</h2>
+      <h2>Nuevo pedido</h2>
 
       <label for="nombre">Nombre del vendedor</label>
-      <input id="nombre" type="text" placeholder="Ejemplo: Silvina" autocomplete="name" />
+      <input id="nombre" type="text" placeholder="Ejemplo: Silvina" />
 
-      <label for="docenas">Cantidad de docenas vendidas</label>
-      <input id="docenas" type="number" min="0.5" step="0.5" placeholder="Ejemplo: 5" />
+      <label for="cliente">Nombre del cliente</label>
+      <input id="cliente" type="text" placeholder="Ejemplo: María Gómez" />
+
+      <label for="telefono">Teléfono del cliente</label>
+      <input id="telefono" type="tel" placeholder="Ejemplo: 3755 123456" />
+
+      <div class="sabores">
+        <div class="sabor mem">
+          <label for="membrillo">Docenas de membrillo</label>
+          <input id="membrillo" type="number" min="0" step="0.5" value="0" />
+        </div>
+
+        <div class="sabor bat">
+          <label for="batata">Docenas de batata</label>
+          <input id="batata" type="number" min="0" step="0.5" value="0" />
+        </div>
+      </div>
+
+      <div class="total-previo">
+        Total del pedido: <span id="totalPrevio">0</span> docenas
+      </div>
 
       <div class="botones">
-        <button class="guardar" onclick="registrarVenta()">✅ Registrar venta</button>
+        <button class="guardar" onclick="registrarVenta()">✅ Registrar pedido</button>
         <button class="whatsapp" onclick="compartirWhatsApp()">📲 Compartir resumen</button>
       </div>
 
@@ -190,9 +267,10 @@
       <h2>Resumen general</h2>
 
       <div class="resumen">
-        <div class="dato">Registros<strong id="totalRegistros">0</strong></div>
-        <div class="dato">Vendedores<strong id="totalVendedores">0</strong></div>
-        <div class="dato">Docenas<strong id="totalDocenas">0</strong></div>
+        <div class="dato">Pedidos<strong id="totalRegistros">0</strong></div>
+        <div class="dato mem">Membrillo<strong id="totalMembrillo">0</strong></div>
+        <div class="dato bat">Batata<strong id="totalBatata">0</strong></div>
+        <div class="dato">Total<strong id="totalDocenas">0</strong></div>
       </div>
 
       <div class="tabla-wrap">
@@ -200,8 +278,11 @@
           <thead>
             <tr>
               <th>Vendedor</th>
-              <th>Docenas</th>
-              <th>Fecha y hora</th>
+              <th>Cliente</th>
+              <th>Teléfono</th>
+              <th>Membrillo</th>
+              <th>Batata</th>
+              <th>Total</th>
               <th>Acción</th>
             </tr>
           </thead>
@@ -209,17 +290,34 @@
         </table>
       </div>
 
-      <p id="sinDatos" class="vacio">Todavía no se registraron ventas.</p>
+      <p id="sinDatos" class="vacio">Todavía no se registraron pedidos.</p>
 
-      <button class="borrarTodo" onclick="borrarTodo()">🗑️ Borrar todos los registros</button>
+      <button class="borrarTodo" onclick="borrarTodo()">🗑️ Borrar todos los pedidos</button>
     </section>
+
   </main>
 
   <script>
-    let ventas = JSON.parse(localStorage.getItem("ventasPastelitos")) || [];
+    let ventas = JSON.parse(localStorage.getItem("ventasPastelitosSabores")) || [];
+
+    const memInput = document.getElementById("membrillo");
+    const batInput = document.getElementById("batata");
+
+    function numero(valor){
+      const n = parseFloat(valor);
+      return isNaN(n) ? 0 : n;
+    }
+
+    function actualizarTotalPrevio(){
+      const total = numero(memInput.value) + numero(batInput.value);
+      document.getElementById("totalPrevio").textContent = total;
+    }
+
+    memInput.addEventListener("input", actualizarTotalPrevio);
+    batInput.addEventListener("input", actualizarTotalPrevio);
 
     function guardarDatos(){
-      localStorage.setItem("ventasPastelitos", JSON.stringify(ventas));
+      localStorage.setItem("ventasPastelitosSabores", JSON.stringify(ventas));
     }
 
     function mostrarAviso(texto, error=false){
@@ -228,38 +326,56 @@
       aviso.style.background = error ? "#ffebee" : "#e8f5e9";
       aviso.style.color = error ? "#c62828" : "#2e7d32";
       aviso.textContent = texto;
-      setTimeout(() => aviso.style.display = "none", 2500);
+
+      setTimeout(() => {
+        aviso.style.display = "none";
+      }, 2500);
     }
 
     function registrarVenta(){
       const nombre = document.getElementById("nombre").value.trim();
-      const docenas = parseFloat(document.getElementById("docenas").value);
+      const cliente = document.getElementById("cliente").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const membrillo = numero(memInput.value);
+      const batata = numero(batInput.value);
 
       if(!nombre){
         mostrarAviso("Escribí el nombre del vendedor.", true);
         return;
       }
 
-      if(isNaN(docenas) || docenas <= 0){
-        mostrarAviso("Ingresá una cantidad válida de docenas.", true);
+      if(!cliente){
+        mostrarAviso("Escribí el nombre del cliente.", true);
+        return;
+      }
+
+      if(membrillo < 0 || batata < 0 || (membrillo === 0 && batata === 0)){
+        mostrarAviso("Ingresá al menos media docena de algún sabor.", true);
         return;
       }
 
       ventas.push({
         id: Date.now(),
         nombre,
-        docenas,
-        fecha: new Date().toLocaleString("es-AR")
+        cliente,
+        telefono,
+        membrillo,
+        batata
       });
 
       guardarDatos();
       actualizarPantalla();
 
       document.getElementById("nombre").value = "";
-      document.getElementById("docenas").value = "";
+      document.getElementById("cliente").value = "";
+      document.getElementById("telefono").value = "";
+      memInput.value = "0";
+      batInput.value = "0";
+
+      actualizarTotalPrevio();
       document.getElementById("nombre").focus();
 
-      mostrarAviso("Venta registrada correctamente.");
+      mostrarAviso("Pedido registrado correctamente.");
     }
 
     function eliminarVenta(id){
@@ -270,7 +386,9 @@
 
     function borrarTodo(){
       if(ventas.length === 0) return;
-      const confirmar = confirm("¿Seguro que querés borrar todos los registros?");
+
+      const confirmar = confirm("¿Seguro que querés borrar todos los pedidos?");
+
       if(confirmar){
         ventas = [];
         guardarDatos();
@@ -280,31 +398,56 @@
 
     function resumenPorVendedor(){
       const resumen = {};
+
       ventas.forEach(v => {
-        resumen[v.nombre] = (resumen[v.nombre] || 0) + v.docenas;
+        if(!resumen[v.nombre]){
+          resumen[v.nombre] = {
+            membrillo:0,
+            batata:0
+          };
+        }
+
+        resumen[v.nombre].membrillo += v.membrillo;
+        resumen[v.nombre].batata += v.batata;
       });
+
       return resumen;
     }
 
     function compartirWhatsApp(){
       if(ventas.length === 0){
-        mostrarAviso("Primero registrá al menos una venta.", true);
+        mostrarAviso("Primero registrá al menos un pedido.", true);
         return;
       }
 
       const resumen = resumenPorVendedor();
-      const total = ventas.reduce((suma, v) => suma + v.docenas, 0);
+      const totalMem = ventas.reduce((suma, v) => suma + v.membrillo, 0);
+      const totalBat = ventas.reduce((suma, v) => suma + v.batata, 0);
 
-      let mensaje = "🥟 *RESUMEN DE VENTA DE PASTELITOS*\n\n";
+      let mensaje = "🥟 *RESUMEN DE VENTA DE PASTELITOS*\\n\\n";
+
       Object.entries(resumen)
-        .sort((a,b) => b[1] - a[1])
-        .forEach(([nombre, cantidad]) => {
-          mensaje += `👤 ${nombre}: *${cantidad} docenas*\n`;
+        .sort((a,b) =>
+          (b[1].membrillo + b[1].batata) -
+          (a[1].membrillo + a[1].batata)
+        )
+        .forEach(([nombre, datos]) => {
+          const total = datos.membrillo + datos.batata;
+
+          mensaje += `👤 *${nombre}*\\n`;
+          mensaje += `Membrillo: ${datos.membrillo} doc.\\n`;
+          mensaje += `Batata: ${datos.batata} doc.\\n`;
+          mensaje += `Total: *${total} doc.*\\n\\n`;
         });
 
-      mensaje += `\n✅ *TOTAL: ${total} docenas*`;
+      mensaje += `🍓 *Membrillo: ${totalMem} docenas*\\n`;
+      mensaje += `🍠 *Batata: ${totalBat} docenas*\\n`;
+      mensaje += `✅ *TOTAL GENERAL: ${totalMem + totalBat} docenas*`;
 
-      window.open("https://wa.me/?text=" + encodeURIComponent(mensaje), "_blank");
+      window.open(
+        "https://wa.me/?text=" + encodeURIComponent(mensaje),
+        "_blank"
+      );
     }
 
     function actualizarPantalla(){
@@ -314,26 +457,38 @@
       tabla.innerHTML = "";
 
       ventas.slice().reverse().forEach(v => {
+        const total = v.membrillo + v.batata;
         const fila = document.createElement("tr");
+
         fila.innerHTML = `
           <td>${v.nombre}</td>
-          <td>${v.docenas}</td>
-          <td>${v.fecha}</td>
-          <td><button class="eliminar" onclick="eliminarVenta(${v.id})">Eliminar</button></td>
+          <td>${v.cliente}</td>
+          <td>${v.telefono || "-"}</td>
+          <td>${v.membrillo}</td>
+          <td>${v.batata}</td>
+          <td><strong>${total}</strong></td>
+          <td>
+            <button class="eliminar" onclick="eliminarVenta(${v.id})">
+              Eliminar
+            </button>
+          </td>
         `;
+
         tabla.appendChild(fila);
       });
 
       sinDatos.style.display = ventas.length ? "none" : "block";
 
-      const resumen = resumenPorVendedor();
-      const totalDocenas = ventas.reduce((suma, v) => suma + v.docenas, 0);
+      const totalMem = ventas.reduce((suma, v) => suma + v.membrillo, 0);
+      const totalBat = ventas.reduce((suma, v) => suma + v.batata, 0);
 
       document.getElementById("totalRegistros").textContent = ventas.length;
-      document.getElementById("totalVendedores").textContent = Object.keys(resumen).length;
-      document.getElementById("totalDocenas").textContent = totalDocenas;
+      document.getElementById("totalMembrillo").textContent = totalMem;
+      document.getElementById("totalBatata").textContent = totalBat;
+      document.getElementById("totalDocenas").textContent = totalMem + totalBat;
     }
 
+    actualizarTotalPrevio();
     actualizarPantalla();
   </script>
 </body>
